@@ -1,6 +1,8 @@
 import pickle
+from Classes import *
 
-def saveUser():
+def saveUser(userID):
+    userClass()
     fh = open("User_Data.p","wb")         ##The entry should be encrypted##
     pickle.dump(teacher,fh)
     fh.close()
