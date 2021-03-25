@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import  messagebox
-from Classes import *
+#from Classes import *
 #from tkinter import ttk
 
 def createUser():
@@ -40,20 +40,14 @@ def createUser():
 
         if firstName_Pass == True and surname_Pass == True and sims_Pass == True and password_Pass == True :
             
+            generateUserID()
 
-            
-            
-            
-            userID = "0001"
+
+
             firstName = firstName.get()
             surname = surname.get()
             simsCode = sims.get()
             accessLevel = userType.get()
-            #
-            #
-            # 
-            # userClass(userID,firstName,surname,simsCode,accessLevel)
-            
 
             from Save_Load import saveUser
             saveUser(userID,firstName,surname,simsCode,accessLevel)
@@ -96,6 +90,10 @@ def createUser():
     
     create_but = Button(createUser_Form,text="Create",command=lambda:check_Create(firstName,surname,sims,password,userType))
     create_but.grid(column=0,row=5)
+
+
+def Users_Load():
+
 
 def teacherLogin():
     teacherlogin_Form = Toplevel(mainForm)
