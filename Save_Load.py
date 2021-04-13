@@ -10,7 +10,7 @@ class user():
 
 
 def saveUser(userID,firstName,surname,simsCode,accessLevel):
-    loadUsers()
+    Users = loadUsers()
 
     new_User = user(userID,firstName,surname,simsCode,accessLevel)  ##formats the data into the user class format##
 
@@ -41,7 +41,6 @@ def loadUsers():
     try:
         fh = open("User_Data.p","rb")       ##Loads existing users from file into array##
         Users = pickle.load(fh)
-        print(Users[1])
         fh.close()
         
     except:
