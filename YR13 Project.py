@@ -11,9 +11,6 @@ def createUser():
         password_Pass = False
 
 
-        #print(firstName.get(),surname.get(),sims.get(),password.get(),userType.get())
-
-
         if firstName_Pass == False:
             if len(firstName.get()) <=20 and len(firstName.get())>0:
                 firstName_Pass = True
@@ -71,10 +68,11 @@ def createUser():
             surname = surname.get()
             simsCode = sims.get()
             accessLevel = userType.get()
+            password = password.get()
 
-            print(userID,firstName,surname,simsCode,accessLevel)
+            print(userID,firstName,surname,simsCode,accessLevel,password)
             from Save_Load import saveUser
-            saveUser(userID,firstName,surname,simsCode,accessLevel)
+            saveUser(userID,firstName,surname,simsCode,accessLevel,password)
             if accessLevel == 1:
                 usrType = "User"
             elif accessLevel == 2:
@@ -86,7 +84,7 @@ def createUser():
 
     createUser_Form = Toplevel(mainForm)
     createUser_Form.title("Create User")
-    createUser_Form.geometry("400x600")
+    createUser_Form.geometry("450x200")
 
     firstName_lbl =Label(createUser_Form,text="First Name:")
     firstName_lbl.grid(column=0,row=0,padx=50)
@@ -122,20 +120,36 @@ def createUser():
     create_but.grid(column=0,row=5)
 
 def Login():
-    def Login_command():
+    global counter
+    counter = 0 
+    def Login_command():            
         from Save_Load import loadUsers
         Users = loadUsers()
-        if len(Users) ==0:
+        if len(Users) ==0:                                      ### Checks for Users in the file
             messagebox.showerror("ERROR","No users detected.")
         from Classes import userClass
-        #counter = 0
-        #Valid = False
-        #while counter < 4:
+        
+        global counter
+        Valid = False
+        
         for i in range(0,len(Users)):
-            if userID_inp.get() == Users[i].userID:
-                usrFound = True
-                if password_inp == Users[i].password:
-                    print("User Verified")
+            if counter > 4:             ### Checks the try limit
+                messagebox.showerror("Login Error","You have exceed the current number of tries, please contact your administrator")
+                break
+            if userID_inp.get() == Users[i].userID:         ### Checks the inputed userID to see if it exists
+                ### needs a decrypt function ###
+                if password_inp.get() == Users[i].password:     ### Checks if the password is correct
+                    if Users[i].accessLevel == 2:           ### Checks if is usr or admin
+                        admin_Screen()
+                    elif Users[i].accessLevel == 1:
+                        User_Screen()
+                    Login_Form.destroy()
+                else:
+                    messagebox.showwarning("Incorrect Information","Username or Password incorrect")
+                    counter = counter + 1
+            else:
+                messagebox.showwarning("Incorrect Information","Username or Password incorrect")
+                counter = counter + 1
 
     Login_Form = Toplevel(mainForm)
     Login_Form.title("Administrator Login")
@@ -157,6 +171,17 @@ def Login():
 
     login_but =Button(Login_Form,text="Login",command= Login_command)
     login_but.grid(column=1,row=3)
+    
+def admin_Screen():
+    admin_Form = Toplevel(mainForm)
+    admin_Form.title("Administrator")
+    admin_Form.geometry("600x150")
+
+    existingUser_lbl = Label(admin_Form,text="Load Users")
+    existingUser_lbl.grid(column=0,row=0,pady=10)
+
+def User_Screen():
+    None
 
 def viewTimetables():
     None
@@ -175,6 +200,7 @@ viewTimetables_but = Button(mainForm,text="View Time Tables",command=viewTimetab
 viewTimetables_but.grid(column=2,row=1,pady=100)
 #mainForm.iconbitmap("Logo.ico")
 
+admin_Screen()
 
 mainForm.mainloop()
 

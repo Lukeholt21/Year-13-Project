@@ -15,9 +15,10 @@ def generateUserID():
         userID = "0001"
         print(userID)
 
-generateUserID()
 
 def load_example():
     Users = loadUsers()
     print(Users[0].userID)
     print(len(Users))
+
+generateUserID()
