@@ -15,6 +15,7 @@ def generateUserID():
         userID = "0001"
         print(userID)
 
+###print(Users[i].userID,Users[i].firstName,Users[i].surname,Users[i].simsCode,Users[i].accessLevel,Users[i].password)
 
 def load_example():
     Users = loadUsers()

@@ -7,6 +7,9 @@ def userClass(userID,firstName,surname,simsCode,accessLevel):
             self.simsCode = simsCode
             self.accessLevel = accessLevel
             self.password = password
+        
+        def printAll(Self):
+            print(self.userID,self.firstName,self.surname,self.simscode,self.accessLevel,self.password)
     #print("b",userID,firstName,surname,simsCode,accessLevel)
     #userID = user(userID,firstName,surname,simsCode,accessLevel)
     #print("dict",userID.__dict__)

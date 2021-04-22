@@ -70,7 +70,7 @@ def createUser():
             accessLevel = userType.get()
             password = password.get()
 
-            print(userID,firstName,surname,simsCode,accessLevel,password)
+            #print(userID,firstName,surname,simsCode,accessLevel,password)
             from Save_Load import saveUser
             saveUser(userID,firstName,surname,simsCode,accessLevel,password)
             if accessLevel == 1:
@@ -118,6 +118,39 @@ def createUser():
     
     create_but = Button(createUser_Form,text="Create",command=lambda:check_Create(firstName,surname,sims,password,userType))
     create_but.grid(column=0,row=5)
+
+def loadUsers():
+    global Users
+    Users = []
+    from Save_Load import loadUsers
+    Users = loadUsers()
+    
+    #for i in range(0,len(Users)):
+    #    print(Users[i].userID,Users[i].firstName,Users[i].surname,Users[i].simsCode,Users[i].accessLevel,Users[i].password)
+    loadUsers_Form = Toplevel(mainForm)
+    loadUsers_Form.title("Current Users")
+    loadUsers_Form.geometry("500x400")
+
+    Users_lsb = Listbox(loadUsers_Form,yview_scroll(1,lines))
+    Users_lsb.grid(column=0,row=0)
+
+    for i in range(0,len(Users)):
+        if Users[i].accessLevel == 2:
+            accessLeveltemp = "Admin"
+        else:
+            accessLeveltemp = "User"
+        Users_lsb.insert(i,(Users[i].userID,Users[i].firstName,Users[i].surname,Users[i].simsCode,accessLeveltemp))
+    
+    search_lbl = Label(loadUsers_Form,text="Search Database for firstname")
+    search_inp = StringVar()
+    search_tbx = Entry(loadUsers_Form,textvariable=search_inp)
+    search_but = Button(loadUsers_Form,text="Search")
+
+    search_lbl.grid(column=1,row=0)
+    search_tbx.grid(column=1,row=1)
+    search_but.grid(column=1,row=2)
+
+
 
 def Login():
     global counter
@@ -177,8 +210,10 @@ def admin_Screen():
     admin_Form.title("Administrator")
     admin_Form.geometry("600x150")
 
-    existingUser_lbl = Label(admin_Form,text="Load Users")
-    existingUser_lbl.grid(column=0,row=0,pady=10)
+    existingUser_but = Button(admin_Form,text="Load Users",command=loadUsers)
+    existingUser_but.grid(column=0,row=0,pady=10,padx=25)
+    createNewUser_but = Button(admin_Form,text="Create New User",command=createUser)
+    createNewUser_but.grid(column=1,row=0,pady=10,padx=25)
 
 def User_Screen():
     None
@@ -200,7 +235,7 @@ viewTimetables_but = Button(mainForm,text="View Time Tables",command=viewTimetab
 viewTimetables_but.grid(column=2,row=1,pady=100)
 #mainForm.iconbitmap("Logo.ico")
 
-admin_Screen()
+loadUsers()
 
 mainForm.mainloop()
 
