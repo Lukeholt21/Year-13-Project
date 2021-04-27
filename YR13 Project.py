@@ -125,13 +125,32 @@ def loadUsers():
     from Save_Load import loadUsers
     Users = loadUsers()
     
-    #for i in range(0,len(Users)):
-    #    print(Users[i].userID,Users[i].firstName,Users[i].surname,Users[i].simsCode,Users[i].accessLevel,Users[i].password)
+    def showuser(event):
+        showuser_Form = Toplevel(loadUsers_Form)
+        showuser_Form.title("Test")
+        showuser_Form.geometry("400x400")
+
+        selection = Users_lsb.curselection()            ###gets the user selected###
+        cs = str(selection)
+        cs_int = int(cs[1])                 ###converts tuple to string to integer###
+        import Save_Load
+        Users=loadUsers()
+
+        User = Users[int(cs[1])]
+        print(User.firstName)
+        userID_lbl = Label(showuser_Form,text=User.firstName)
+        userID_lbl.pack()
+
+
+
+        
+
+
     loadUsers_Form = Toplevel(mainForm)
     loadUsers_Form.title("Current Users")
     loadUsers_Form.geometry("500x400")
 
-    Users_lsb = Listbox(loadUsers_Form,yview_scroll(1,lines))
+    Users_lsb = Listbox(loadUsers_Form)
     Users_lsb.grid(column=0,row=0)
 
     for i in range(0,len(Users)):
@@ -141,6 +160,8 @@ def loadUsers():
             accessLeveltemp = "User"
         Users_lsb.insert(i,(Users[i].userID,Users[i].firstName,Users[i].surname,Users[i].simsCode,accessLeveltemp))
     
+    Users_lsb.bind('<Double-Button>',showuser)
+
     search_lbl = Label(loadUsers_Form,text="Search Database for firstname")
     search_inp = StringVar()
     search_tbx = Entry(loadUsers_Form,textvariable=search_inp)
@@ -150,7 +171,7 @@ def loadUsers():
     search_tbx.grid(column=1,row=1)
     search_but.grid(column=1,row=2)
 
-
+    
 
 def Login():
     global counter
@@ -163,7 +184,6 @@ def Login():
         from Classes import userClass
         
         global counter
-        Valid = False
         
         for i in range(0,len(Users)):
             if counter > 4:             ### Checks the try limit
