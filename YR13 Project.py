@@ -10,26 +10,27 @@ def createUser():
         sims_Pass = False
         password_Pass = False
 
-
+        ###Validates the data entered###
+        
         if firstName_Pass == False:
-            if len(firstName.get()) <=20 and len(firstName.get())>0:
+            if len(firstName.get()) <=20 and len(firstName.get())>0:        ###Checks is input is between 20 and 0 characters long###
                 firstName_Pass = True
             else:
                 messagebox.showerror("First Name Error","Please enter a first name")
         
         if surname_Pass == False:
-            if len(surname.get()) <= 20 and len(surname.get()) >0:
+            if len(surname.get()) <= 20 and len(surname.get()) >0:          ###Checks is input is between 20 and 0 characters long###
                 surname_Pass = True
             else:
                 messagebox.showerror("Surname Error","Please enter a surname")
 
-        if sims_Pass == False:
+        if sims_Pass == False:              ###Checks is input is 3 characters long###
             if len(sims.get()) == 3:
                 sims_Pass = True
             else:
                 messagebox.showerror("Sims Code Error","Please enter you 3 character sims code or initials")
 
-        if password_Pass == False:
+        if password_Pass == False:                                ###Checks is input is between 20 and 0 characters long###
             if len(password.get()) <= 24 and len(password.get())>3:
                 password_Pass = True
             else:
@@ -37,7 +38,7 @@ def createUser():
 
         if firstName_Pass == True and surname_Pass == True and sims_Pass == True and password_Pass == True :
             
-            def pad_recursion(newUserID_str):
+            def pad_recursion(newUserID_str):                  ###pads number to 4 digits eg 1 goes to 0001###
                 if len(newUserID_str) == 4:
                     return newUserID_str
                 else:
@@ -45,7 +46,7 @@ def createUser():
 
             global Users
             Users=[]
-            def generateUserID():
+            def generateUserID():                         ###Generates a new user id based on the number of users stored already###
                 from Save_Load import loadUsers
                 Users = loadUsers()
                 
@@ -55,9 +56,8 @@ def createUser():
                     newUserID_str = str(newUserID_int)
                     userID = pad_recursion(newUserID_str)
                     return userID
-                    #needs to pad 0 before list_length  Use recustion   +1#
                 except:
-                    userID = "0001"
+                    userID = "0001"      ###if no users found start at 0001
                     return userID
             
             userID = generateUserID()
@@ -70,10 +70,9 @@ def createUser():
             accessLevel = userType.get()
             password = password.get()
 
-            #print(userID,firstName,surname,simsCode,accessLevel,password)
             from Save_Load import saveUser
             saveUser(userID,firstName,surname,simsCode,accessLevel,password)
-            if accessLevel == 1:
+            if accessLevel == 1:       ###decides if admin or user
                 usrType = "User"
             elif accessLevel == 2:
                 usrType = "Admin"
@@ -118,11 +117,13 @@ def createUser():
     
     create_but = Button(createUser_Form,text="Create",command=lambda:check_Create(firstName,surname,sims,password,userType))
     create_but.grid(column=0,row=5)
+    
+    createUser_Form.iconbitmap("Logo.ico")
 
 def loadUsers():
     global Users
     Users = []
-    from Save_Load import loadUsers
+    from Save_Load import loadUsers       ###loads users using loadUsers from Save_Load lib###
     Users = loadUsers()
     
     def showuser(event):
@@ -136,29 +137,31 @@ def loadUsers():
         import Save_Load
         Users=loadUsers()
 
-        User = Users[int(cs[1])]
+        User = Users[int(cs[1])]           ###gets the selected user data###
         print(User.firstName)
-        userID_lbl = Label(showuser_Form,text=User.firstName)
-        userID_lbl.pack()
-
-
-
+        userID_lbl = Label(showuser_Form,text=User.userID)
+        userID_lbl.grid(column=0,row=0)
+        firstName_lbl = Label(showuser_Form,text=User.firstName)
+        firstName_lbl.grid(column=1,row=0)
+        surname_lbl = Label(showuser_Form,text=User.surname)
+        surname_lbl.grid(column=2,row=0)
         
 
 
     loadUsers_Form = Toplevel(mainForm)
     loadUsers_Form.title("Current Users")
     loadUsers_Form.geometry("500x400")
+    loadUsers_Form.iconbitmap("Logo.ico")
 
     Users_lsb = Listbox(loadUsers_Form)
     Users_lsb.grid(column=0,row=0)
-
-    for i in range(0,len(Users)):
+ 
+    for i in range(0,len(Users)):             ###places all users into a listbox###
         if Users[i].accessLevel == 2:
             accessLeveltemp = "Admin"
         else:
             accessLeveltemp = "User"
-        Users_lsb.insert(i,(Users[i].userID,Users[i].firstName,Users[i].surname,Users[i].simsCode,accessLeveltemp))
+        Users_lsb.insert(i,(Users[i].userID,Users[i].firstName,Users[i].surname,Users[i].simsCode)) ####,accessLeveltemp))####
     
     Users_lsb.bind('<Double-Button>',showuser)
 
@@ -179,18 +182,21 @@ def Login():
     def Login_command():            
         from Save_Load import loadUsers
         Users = loadUsers()
-        if len(Users) ==0:                                      ### Checks for Users in the file
+        if len(Users) ==0:                                      ###Checks for Users in the file###
             messagebox.showerror("ERROR","No users detected.")
         from Classes import userClass
         
         global counter
+        
+        found = False
         
         for i in range(0,len(Users)):
             if counter > 4:             ### Checks the try limit
                 messagebox.showerror("Login Error","You have exceed the current number of tries, please contact your administrator")
                 break
             if userID_inp.get() == Users[i].userID:         ### Checks the inputed userID to see if it exists
-                ### needs a decrypt function ###
+                #### needs a decrypt function ####
+                found = True
                 if password_inp.get() == Users[i].password:     ### Checks if the password is correct
                     if Users[i].accessLevel == 2:           ### Checks if is usr or admin
                         admin_Screen()
@@ -200,9 +206,12 @@ def Login():
                 else:
                     messagebox.showwarning("Incorrect Information","Username or Password incorrect")
                     counter = counter + 1
-            else:
-                messagebox.showwarning("Incorrect Information","Username or Password incorrect")
-                counter = counter + 1
+            
+            if i == len(Users):
+                found = False
+        if found == False:
+            messagebox.showwarning("Incorrect Information","Username or Password incorrect")
+            counter = counter + 1
 
     Login_Form = Toplevel(mainForm)
     Login_Form.title("Administrator Login")
@@ -224,11 +233,13 @@ def Login():
 
     login_but =Button(Login_Form,text="Login",command= Login_command)
     login_but.grid(column=1,row=3)
+    Login_Form.iconbitmap("Logo.ico")
     
 def admin_Screen():
     admin_Form = Toplevel(mainForm)
     admin_Form.title("Administrator")
     admin_Form.geometry("600x150")
+    admin_Form.iconbitmap("Logo.ico")
 
     existingUser_but = Button(admin_Form,text="Load Users",command=loadUsers)
     existingUser_but.grid(column=0,row=0,pady=10,padx=25)
@@ -239,13 +250,18 @@ def User_Screen():
     User_Form = Toplevel(mainForm)
     User_Form.title("User")
     User_Form.geometry("600x150")
+    User_Form.iconbitmap("Logo.ico")
     
     viewTimetable_but = Button(User_Form,text="View your timetable",command=viewTimetables)
     viewTimetable_but.grid(column=0,row=0,pady=10,padx=25)
     requestTime_but = Button(User_Form,text="Request a time from administrator",command=requestTime)
     requestTime_but.grid(column=1,row=0,pady=10,padx=25)
+    
 
 def viewTimetables():
+    None
+
+def requestTime():
     None
 
 mainForm = Tk()
@@ -254,13 +270,11 @@ mainForm.geometry("450x300")
 
 welcome_lbl = Label(mainForm,text="Welcome!")
 welcome_lbl.grid(column=1,row=0,pady=20,padx=25)
-#teacherLogin_but = Button(mainForm,text="Teacher Login", command= teacherLogin )
-#teacherLogin_but.grid(column=0,row=1,padx=50,pady=100)
 Login_but =Button(mainForm,text="Login",command=Login)
 Login_but.grid(column=0,row=1,padx=50,pady=100)
 viewTimetables_but = Button(mainForm,text="View Time Tables",command=viewTimetables)
 viewTimetables_but.grid(column=2,row=1,pady=100)
-#mainForm.iconbitmap("Logo.ico")
+mainForm.iconbitmap("Logo.ico")
 
 loadUsers()
 
