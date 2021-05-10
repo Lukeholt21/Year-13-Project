@@ -236,7 +236,14 @@ def admin_Screen():
     createNewUser_but.grid(column=1,row=0,pady=10,padx=25)
 
 def User_Screen():
-    None
+    User_Form = Toplevel(mainForm)
+    User_Form.title("User")
+    User_Form.geometry("600x150")
+    
+    viewTimetable_but = Button(User_Form,text="View your timetable",command=viewTimetables)
+    viewTimetable_but.grid(column=0,row=0,pady=10,padx=25)
+    requestTime_but = Button(User_Form,text="Request a time from administrator",command=requestTime)
+    requestTime_but.grid(column=1,row=0,pady=10,padx=25)
 
 def viewTimetables():
     None
