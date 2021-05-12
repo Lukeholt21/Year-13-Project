@@ -10,17 +10,16 @@ class user():
         self.password = password
 
 class resource():
-    def __inti__(self,resourceID,location,resource_type,num_resource):
+    def __init__(self,resourceID,resource_location,resource_type,num_resource):
         self.resourceID = resourceID     ##PRIMARY KEY##
-        self.location = location
+        self.resource_location = resource_location
         self.resource_type = resource_type
         self.num_resource = num_resource
 
 def saveUser(userID,firstName,surname,simsCode,accessLevel,password):
     Users = loadUsers()
 
-    new_User = user(userID,firstName,surname,simsCode,accessLevel,password)  ##formats the data into the user class format##
-    
+    new_User = user(userID,firstName,surname,simsCode,accessLevel,password)  ##formats the data into the user class format##  
     Users.append(new_User)                  ##Appends new users to existing user list##
 
     fh = open("User_Data.p","wb")           ##The entry should be encrypted##
@@ -37,12 +36,13 @@ def lessonSave():
     pickle.dump(lesson,fh)
     fh.close()
 
-def resourceSave(resourceID,location,resource_type,num_resource):
+def resourceSave(resourceID,resource_location,resource_type,num_resource):
     Resources = loadResources()
     
-    new_resource = resource(resourceID,location,resource_type,num_resource)
+    new_resource = resource(resourceID,resource_location,resource_type,num_resource)
     Resources.append(new_resource)
-    
+
+
     fh = open("Resources.p","wb")
     pickle.dump(resource,fh)
     fh.close()
@@ -69,11 +69,12 @@ def loadLessons():
 
 def loadResources():
     try:
-        fh = open("Resources.p","fh")
+        fh = open("Resources.p","rb")
         Resources = pickle.load(fh)
         fh.close()
     except:
         Resources=[]
     return Resources
 
-
+#Resources = loadResources()
+#print(Resources[1].resourceID)
