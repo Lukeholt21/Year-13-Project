@@ -264,6 +264,83 @@ def viewTimetables():
 def requestTime():
     None
 
+def addRoom():
+    def create_Resource():
+        resource_type = radvar.get()
+        num_resource = num_resourcevar.get()
+        location = locationvar.get()
+        
+        location_pass = False
+        num_resource_pass = False
+        
+        print(len(location),location,num_resource)
+        if len(location) >1 or len(location)<3:
+            location_pass = True
+        else:
+            messagebox.showinfo(title="Room location ERROR",message="Room location must be 2 or 3 characters long")
+        if num_resource < 50:
+            num_resource_pass = True
+        else:
+            messagebox.showinfo(title="Resource Limit reached",message="Cannot have more than 50 computers in a room")
+        if location_pass==True and num_resource_pass==True:
+            
+            def padRecursion(resourceID):
+                if len(resourceID) == 5:
+                    return resourceID
+                else:
+                    return padRecursion("0"+resourceID)
+            
+            def generateResourceID():
+                from Save_Load import loadResources
+                
+                resourceID = str(len(loadResources())+1)
+                resourceID = padRecursion(resourceID)
+                return resourceID
+            
+            resourceID = generateResourceID()
+            
+            from Save_Load import resourceSave
+            if resource_type == 1:
+                resource_type = "Computer Room"
+            elif resource_type == 2:
+                resoure_type = "Laptop Tray"
+            resourceSave(resourceID,location,resource_type,num_resource)
+            messagebox.showinfo(title="New Resource added",message=(resourceID,resource_type,"Location: ",location,num_resource,"Computers and/or Laptops"))
+                
+    Resource_Form = Toplevel(mainForm)   #change to admin_Form
+    Resource_Form.title("Resources")
+    Resource_Form.geometry("600x150")
+    Resource_Form.iconbitmap("Logo.ico")
+    
+    #resourceID,location,resource_type,num_resource
+    
+    ###choose between laptop tray or computer room###
+    radvar = IntVar()
+    resource_type_rad_comp = Radiobutton(Resource_Form,variable=radvar,value=1,text="Computer Room")
+    resource_type_rad_lapt = Radiobutton(Resource_Form,variable=radvar,value=2,text="Laptop Tray")
+    resource_type_rad_comp.grid(column=0,row=2)
+    resource_type_rad_lapt.grid(column=1,row=2)
+    
+    ###entry for location of resources###
+    locationvar = StringVar()
+    location_lbl = Label(Resource_Form,text="Location of Resource")
+    location_lbl.grid(column=0,row=0)
+    location_ety = Entry(Resource_Form,textvariable=locationvar)
+    location_ety.grid(column=1,row=0)
+    
+    ###Entry for number of resources###
+    num_resourcevar = IntVar()      ##might need changing to stringvar()##
+    num_resource_lbl = Label(Resource_Form,text="How many computers and laptops")
+    num_resource_lbl.grid(column=0,row=1)
+    num_resource_ety = Entry(Resource_Form,textvariable=num_resourcevar)
+    num_resource_ety.grid(column=1,row=1)
+    
+    ###Button for creation subroutine###
+    create_resource_but = Button(Resource_Form,text="Create",command=create_Resource)
+    create_resource_but.grid(column=1,row=3)
+
+
+
 mainForm = Tk()
 mainForm.title("Booking Login Screen")
 mainForm.geometry("450x300")
@@ -276,8 +353,10 @@ viewTimetables_but = Button(mainForm,text="View Time Tables",command=viewTimetab
 viewTimetables_but.grid(column=2,row=1,pady=100)
 mainForm.iconbitmap("Logo.ico")
 
-loadUsers()
+#loadUsers()
+addRoom()
 
 mainForm.mainloop()
 
 
+ 

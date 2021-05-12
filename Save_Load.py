@@ -9,6 +9,12 @@ class user():
         self.accessLevel = accessLevel
         self.password = password
 
+class resource():
+    def __inti__(self,resourceID,location,resource_type,num_resource):
+        self.resourceID = resourceID     ##PRIMARY KEY##
+        self.location = location
+        self.resource_type = resource_type
+        self.num_resource = num_resource
 
 def saveUser(userID,firstName,surname,simsCode,accessLevel,password):
     Users = loadUsers()
@@ -31,23 +37,25 @@ def lessonSave():
     pickle.dump(lesson,fh)
     fh.close()
 
-def resourceSave():
+def resourceSave(resourceID,location,resource_type,num_resource):
+    Resources = loadResources()
+    
+    new_resource = resource(resourceID,location,resource_type,num_resource)
+    Resources.append(new_resource)
+    
     fh = open("Resources.p","wb")
     pickle.dump(resource,fh)
     fh.close()
 
 
 def loadUsers():
-   
     try:
         fh = open("User_Data.p","rb")       ##Loads existing users from file into array##
         Users = pickle.load(fh)
-        fh.close()
-        
+        fh.close()        
     except:
         Users=[]                            ##If file doesnt exist creates new array##
     return Users
-    
 
 def loadBookings():
     fh = open("Booking.p","rb")
@@ -60,8 +68,12 @@ def loadLessons():
     fh.close()
 
 def loadResources():
-    fh = open("Resources.p","fh")
-    resources_Loaded = pickle.load(fh)
-    fh.close()
+    try:
+        fh = open("Resources.p","fh")
+        Resources = pickle.load(fh)
+        fh.close()
+    except:
+        Resources=[]
+    return Resources
 
 
