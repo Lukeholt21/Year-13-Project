@@ -174,8 +174,6 @@ def loadUsers():
     search_tbx.grid(column=1,row=1)
     search_but.grid(column=1,row=2)
 
-    
-
 def Login():
     global counter
     counter = 0 
@@ -257,7 +255,6 @@ def User_Screen():
     requestTime_but = Button(User_Form,text="Request a time from administrator",command=requestTime)
     requestTime_but.grid(column=1,row=0,pady=10,padx=25)
     
-
 def viewTimetables():
     None
 
@@ -268,13 +265,13 @@ def addRoom():
     def create_Resource():
         resource_type = radvar.get()
         num_resource = num_resourcevar.get()
-        location = locationvar.get()
+        resource_location = locationvar.get()
         
         location_pass = False
         num_resource_pass = False
         
-        print(len(location),location,num_resource)
-        if len(location) >1 or len(location)<3:
+        print(len(resource_location),resource_location,num_resource)
+        if len(resource_location) >1 or len(resource_location)<3:
             location_pass = True
         else:
             messagebox.showinfo(title="Room location ERROR",message="Room location must be 2 or 3 characters long")
@@ -292,20 +289,28 @@ def addRoom():
             
             def generateResourceID():
                 from Save_Load import loadResources
-                
-                resourceID = str(len(loadResources())+1)
-                resourceID = padRecursion(resourceID)
-                return resourceID
+                Resources = loadResources()
+                try:
+                    resourceID = str(len(Resources)+1)
+                    resourceID = padRecursion(resourceID)
+                    return resourceID
+                except:
+                    resourceID = "00001"
+                    return resourceID
             
             resourceID = generateResourceID()
             
-            from Save_Load import resourceSave
             if resource_type == 1:
                 resource_type = "Computer Room"
             elif resource_type == 2:
-                resoure_type = "Laptop Tray"
-            resourceSave(resourceID,location,resource_type,num_resource)
+                resource_type = "Laptop Tray"
+
+            print(resourceID,resource_location,resource_type,num_resource)
+            from Save_Load import resourceSave
+            resourceSave(resourceID,resource_location,resource_type,num_resource)
             messagebox.showinfo(title="New Resource added",message=(resourceID,resource_type,"Location: ",location,num_resource,"Computers and/or Laptops"))
+
+            Resource_Form.destroy()
                 
     Resource_Form = Toplevel(mainForm)   #change to admin_Form
     Resource_Form.title("Resources")
@@ -353,7 +358,6 @@ viewTimetables_but = Button(mainForm,text="View Time Tables",command=viewTimetab
 viewTimetables_but.grid(column=2,row=1,pady=100)
 mainForm.iconbitmap("Logo.ico")
 
-#loadUsers()
 addRoom()
 
 mainForm.mainloop()
