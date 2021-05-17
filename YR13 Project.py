@@ -47,8 +47,8 @@ def createUser():
             global Users
             Users=[]
             def generateUserID():                         ###Generates a new user id based on the number of users stored already###
-                from Save_Load import loadUsers
-                Users = loadUsers()
+                from Save_Load import loadUsers_saveload
+                Users = loadUsers_saveload()
                 
                 try:
                     newUserID_int = len(Users)
@@ -123,8 +123,8 @@ def createUser():
 def loadUsers():
     global Users
     Users = []
-    from Save_Load import loadUsers       ###loads users using loadUsers from Save_Load lib###
-    Users = loadUsers()
+    from Save_Load import loadUsers_saveload       ###loads users using loadUsers_saveload from Save_Load lib###
+    Users = loadUsers_saveload()
     
     def showuser(event):
         showuser_Form = Toplevel(loadUsers_Form)
@@ -135,7 +135,7 @@ def loadUsers():
         cs = str(selection)
         cs_int = int(cs[1])                 ###converts tuple to string to integer###
         import Save_Load
-        Users=loadUsers()
+        Users=loadUsers_saveload()
 
         User = Users[int(cs[1])]           ###gets the selected user data###
         print(User.firstName)
@@ -146,6 +146,44 @@ def loadUsers():
         surname_lbl = Label(showuser_Form,text=User.surname)
         surname_lbl.grid(column=2,row=0)
         
+    def showuser_search(i):
+        from Save_Load import loadUsers_saveload
+        Users= loadUsers_saveload()
+        User = Users[i]
+        
+
+        showuser_Form_search = Toplevel(loadUsers_Form)
+        showuser_Form_search.title((User.firstName,User.surname))
+        showuser_Form_search.geometry("400x400")
+
+        userID_lbl = Label(showuser_Form_search,text=User.userID)
+        userID_lbl.grid(column=0,row=0)
+        firstName_lbl = Label(showuser_Form_search,text=User.firstName)
+        firstName_lbl.grid(column=1,row=0)
+        surname_lbl = Label(showuser_Form_search,text=User.surname)
+        surname_lbl.grid(column=2,row=0)
+
+    def Usersearch():
+        searchItem = search_inp.get()
+        for i in range(0,len(Users)):
+            if Users[i].firstName == searchItem:
+                showuser_search(i)
+            if i == len(Users):
+                messagebox.showerror("User Not Found","User Not Found")
+
+    def subBubSort(Users):
+        newdata = []
+        for i in range(0,len(Users)):
+            newdata.append((Users[i].userID,Users[i].firstName,Users[i].surname,Users[i].simsCode))
+
+        for i in range(0,len(newdata)):
+            for j in range(0,len(newdata)-i-1):
+                if (newdata[j][1]) > newdata[j+1][1]:
+                    temp = newdata[j]
+                    newdata[j] = newdata[j+1]
+                    newdata[j+1] = temp
+                    print(newdata)
+    
 
 
     loadUsers_Form = Toplevel(mainForm)
@@ -153,8 +191,13 @@ def loadUsers():
     loadUsers_Form.geometry("500x400")
     loadUsers_Form.iconbitmap("Logo.ico")
 
+    sort_lbl = Label(loadUsers_Form,text="Sort")
+    sort_lbl.grid(column=0,row=0)
+    sort_but = Button(loadUsers_Form,text="Sort",command=lambda: subBubSort(Users))
+    sort_but.grid(column=1,row=0)
+
     Users_lsb = Listbox(loadUsers_Form)
-    Users_lsb.grid(column=0,row=0)
+    Users_lsb.grid(column=0,row=1)
  
     for i in range(0,len(Users)):             ###places all users into a listbox###
         if Users[i].accessLevel == 2:
@@ -168,20 +211,21 @@ def loadUsers():
     search_lbl = Label(loadUsers_Form,text="Search Database for firstname")
     search_inp = StringVar()
     search_tbx = Entry(loadUsers_Form,textvariable=search_inp)
-    search_but = Button(loadUsers_Form,text="Search")
+    search_but = Button(loadUsers_Form,text="Search",command= Usersearch)
 
-    search_lbl.grid(column=1,row=0)
-    search_tbx.grid(column=1,row=1)
-    search_but.grid(column=1,row=2)
+    search_lbl.grid(column=3,row=0)
+    search_tbx.grid(column=3,row=1)
+    search_but.grid(column=3,row=2)
 
 def Login():
     global counter
     counter = 0 
     def Login_command():            
-        from Save_Load import loadUsers
-        Users = loadUsers()
+        from Save_Load import loadUsers_saveload
+        Users = loadUsers_saveload()
         if len(Users) ==0:                                      ###Checks for Users in the file###
             messagebox.showerror("ERROR","No users detected.")
+            createUser()
         from Classes import userClass
         
         global counter
@@ -243,6 +287,9 @@ def admin_Screen():
     existingUser_but.grid(column=0,row=0,pady=10,padx=25)
     createNewUser_but = Button(admin_Form,text="Create New User",command=createUser)
     createNewUser_but.grid(column=1,row=0,pady=10,padx=25)
+    addroom_but = Button(admin_Form,text="Add Room",command=addRoom)
+    addroom_but.grid(column=3,row=0)
+    
 
 def User_Screen():
     User_Form = Toplevel(mainForm)
@@ -261,6 +308,40 @@ def viewTimetables():
 def requestTime():
     None
 
+def addLesson():
+    def create_Lesson():
+        None
+    
+    lesson_Form = Toplevel(mainForm)
+    lesson_Form.title("Add Lesson")
+    lesson_Form.geometry("600x150")
+    lesson_Form.iconbitmap("Logo.ico")
+    
+    ### Subject ###
+    subject_var = StringVar()
+    subject_lbl = Label(lesson_Form,text="Subject")
+    subject_ety = Entry(lesson_Form,textvariable=subject_var)
+    subject_lbl.grid()
+    subject_ety.grid()
+    
+    ### Faculty ###
+    faculty_rad_var = IntVar()
+    faculty_Science_rad = Radiobutton(lesson_Form,varible=faculty_rad_var,value=0,text="Science")
+    faculty_Languages_rad = Radiobutton(lesson_Form,varible=faculty_rad_var,value=1,text="Languages")
+    faculty_English_rad = Radiobutton(lesson_Form,varible=faculty_rad_var,value=2,text="English")
+    faculty_Humanities_rad = Radiobutton(lesson_Form,varible=faculty_rad_var,value=3,text="Humanities")
+    faculty_Tech_rad = Radiobutton(lesson_Form,varible=faculty_rad_var,value=4,text="Tech")
+    faculty_Art_rad = Radiobutton(lesson_Form,varible=faculty_rad_var,value=5,text="Art")
+    faculty_Science_rad.grid()           #### NEEDS TO HAVE GRIDS SET UP ####
+    faculty_Language_rad.grid()
+    faculty_English_rad.grid()
+    faculty_Humanities_rad.grid()
+    faculty_Tech_rad.grid()
+    faculty_Art_rad.grid()
+    ### Class Size ###
+    
+    ### Lesson Time ###
+    
 def addRoom():
     def create_Resource():
         resource_type = radvar.get()
@@ -308,11 +389,11 @@ def addRoom():
             print(resourceID,resource_location,resource_type,num_resource)
             from Save_Load import resourceSave
             resourceSave(resourceID,resource_location,resource_type,num_resource)
-            messagebox.showinfo(title="New Resource added",message=(resourceID,resource_type,"Location: ",location,num_resource,"Computers and/or Laptops"))
+            messagebox.showinfo(title="New Resource added",message=(resourceID,resource_type,"Location: ",resource_location,num_resource,"Computers and/or Laptops"))
 
             Resource_Form.destroy()
                 
-    Resource_Form = Toplevel(mainForm)   #change to admin_Form
+    Resource_Form = Toplevel(admin_Form)   #change to admin_Form
     Resource_Form.title("Resources")
     Resource_Form.geometry("600x150")
     Resource_Form.iconbitmap("Logo.ico")
@@ -358,7 +439,7 @@ viewTimetables_but = Button(mainForm,text="View Time Tables",command=viewTimetab
 viewTimetables_but.grid(column=2,row=1,pady=100)
 mainForm.iconbitmap("Logo.ico")
 
-addRoom()
+addLesson()
 
 mainForm.mainloop()
 

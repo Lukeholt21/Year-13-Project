@@ -16,8 +16,24 @@ class resource():
         self.resource_type = resource_type
         self.num_resource = num_resource
 
+class lesson():
+    def __init__(self,lessonID,subject,class_size,faculty,lesson_time):
+        self.lessonID = lessonID         ##Primary Key##
+        self.subject = subject
+        self.class_size = class_size
+        self.faculty = faculty
+        self.lesson_time = lesson_time
+
+class booking():
+    def __init__(self,bookingID,authorised,userID,resourceID,lessonID):
+        self.bookingID = bookingID         ##Primary Key##
+        self.authorised = authorised  
+        self.userID = userID               ##Foreign Key##
+        self.resourceID = resourceID       ##Foreign Key##
+        self.lessonID = lessonID           ##Foreign Key##
+
 def saveUser(userID,firstName,surname,simsCode,accessLevel,password):
-    Users = loadUsers()
+    Users = loadUsers_saveload()
 
     new_User = user(userID,firstName,surname,simsCode,accessLevel,password)  ##formats the data into the user class format##  
     Users.append(new_User)                  ##Appends new users to existing user list##
@@ -27,13 +43,22 @@ def saveUser(userID,firstName,surname,simsCode,accessLevel,password):
     fh.close()
 
 def bookingSave():
+    Bookings = loadBookings()
+    
+    new_booking = booking(bookingID,authorised,userID,resourceID,lessonID)
+    Bookings.append(new_booking)
+    
     fh = open("Bookings.p","wb")
-    pickle.dump(booking,fh)
+    pickle.dump(Bookings,fh)
     fh.close()
 
 def lessonSave():
+    Lessons = loadLessons()
+    
+    new_lesson = lesson(lessonID,subject,class_size,faculty,lesson_time)
+    Lessons.append(new_lesson)
     fh = open("Lessons.p","wb")
-    pickle.dump(lesson,fh)
+    pickle.dump(Lessons,fh)
     fh.close()
 
 def resourceSave(resourceID,resource_location,resource_type,num_resource):
@@ -44,11 +69,11 @@ def resourceSave(resourceID,resource_location,resource_type,num_resource):
 
 
     fh = open("Resources.p","wb")
-    pickle.dump(resource,fh)
+    pickle.dump(Resources,fh)
     fh.close()
 
 
-def loadUsers():
+def loadUsers_saveload():
     try:
         fh = open("User_Data.p","rb")       ##Loads existing users from file into array##
         Users = pickle.load(fh)
@@ -58,14 +83,22 @@ def loadUsers():
     return Users
 
 def loadBookings():
-    fh = open("Booking.p","rb")
-    bookings_Loaded = pickle.load(fh)
-    fh.close()
+    try:
+        fh = open("Booking.p","rb")
+        Bookings = pickle.load(fh)
+        fh.close()
+    except:
+        Bookings = []
+    return bookings
 
 def loadLessons():
-    fh = open("Lessons.p","rb")
-    lessons_Loaded = pickle.load(fh)
-    fh.close()
+    try:
+        fh = open("Lessons.p","rb")
+        Lessons= pickle.load(fh)
+        fh.close()
+    except:
+        Lessons = []
+    return lessons
 
 def loadResources():
     try:
@@ -76,5 +109,4 @@ def loadResources():
         Resources=[]
     return Resources
 
-#Resources = loadResources()
-#print(Resources[1].resourceID)
+

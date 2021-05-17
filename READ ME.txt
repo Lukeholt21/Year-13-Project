@@ -1,0 +1,5 @@
+#######################################
+On first running go to the Login screen
+click login and ok on both popups and 
+create a new admin user.
+#######################################
